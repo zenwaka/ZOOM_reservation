@@ -4,14 +4,25 @@
   <meta charset="UTF-8">
   <title>会議予約一覧</title>
   <style>
-    body { font-family: sans-serif; padding: 2rem; }
-    table { border-collapse: collapse; width: 100%; }
+    body { font-family: sans-serif; padding: 2rem; background: #f9f9f9; }
+    h1 { margin-bottom: 0.5rem; }
+    p { margin-bottom: 2rem; }
+    table { border-collapse: collapse; width: 100%; background: #fff; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-    th { background-color: #f0f0f0; }
+    th { background-color: #eee; }
+    a { color: #0077cc; text-decoration: none; }
+    a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
   <h1>会議予約一覧</h1>
+  <p>
+    会議の予約をご希望の方は、以下のフォームから申請してください：<br>
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSeo-dHHhUbRbek30AeOoiZKu8TpEzoG89om46XhAxYKP65NzA/viewform" target="_blank">
+      ▶ 会議予約フォームはこちら
+    </a>
+  </p>
+
   <table id="reservation-table">
     <thead>
       <tr>
@@ -19,6 +30,7 @@
         <th>開始</th>
         <th>終了</th>
         <th>会議名</th>
+        <th>会議URL</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -26,7 +38,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script>
-    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTFwnolwU5SG6MCCRnlgyaW6k4qo2iDB2uSn-4nN-dg1I5Vi2nO1BUSWuy_cICE1YCRq3PUUJe7kS2N/pub?output=csv';
+    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/スプレッドシートID/pub?output=csv';
 
     fetch(csvUrl)
       .then(response => response.text())
@@ -36,12 +48,14 @@
 
         const tbody = document.querySelector('#reservation-table tbody');
         rows.forEach(row => {
+          const url = row[5] && row[5].trim() !== '' ? `<a href="${row[5]}" target="_blank">${row[5]}</a>` : '事務局発行対応待ち';
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td>${row[1]}</td>  <!-- 予約者 -->
             <td>${row[2]}</td>  <!-- 開始 -->
             <td>${row[3]}</td>  <!-- 終了 -->
             <td>${row[4]}</td>  <!-- 会議名 -->
+            <td>${url}</td>     <!-- 会議URL -->
           `;
           tbody.appendChild(tr);
         });
