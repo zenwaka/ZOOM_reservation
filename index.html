@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>会議予約一覧</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #f0f0f0; }
+  </style>
+</head>
+<body>
+  <h1>会議予約一覧</h1>
+  <table id="reservation-table">
+    <thead>
+      <tr>
+        <th>予約者</th>
+        <th>開始</th>
+        <th>終了</th>
+        <th>会議名</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script>
+    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTFwnolwU5SG6MCCRnlgyaW6k4qo2iDB2uSn-4nN-dg1I5Vi2nO1BUSWuy_cICE1YCRq3PUUJe7kS2N/pub?output=csv';
+
+    fetch(csvUrl)
+      .then(response => response.text())
+      .then(csvText => {
+        const parsed = Papa.parse(csvText, { header: false });
+        const rows = parsed.data.slice(1); // ヘッダー行を除く
+
+        const tbody = document.querySelector('#reservation-table tbody');
+        rows.forEach(row => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${row[1]}</td>  <!-- 予約者 -->
+            <td>${row[2]}</td>  <!-- 開始 -->
+            <td>${row[3]}</td>  <!-- 終了 -->
+            <td>${row[4]}</td>  <!-- 会議名 -->
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+  </script>
+</body>
+</html>
