@@ -38,7 +38,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script>
-    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/スプレッドシートID/pub?output=csv';
+    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTFwnolwU5SG6MCCRnlgyaW6k4qo2iDB2uSn-4nN-dg1I5Vi2nO1BUSWuy_cICE1YCRq3PUUJe7kS2N/pub?output=csv';
 
     fetch(csvUrl)
       .then(response => response.text())
@@ -48,7 +48,10 @@
 
         const tbody = document.querySelector('#reservation-table tbody');
         rows.forEach(row => {
-          const url = row[5] && row[5].trim() !== '' ? `<a href="${row[5]}" target="_blank">${row[5]}</a>` : '事務局発行対応待ち';
+          const url = row[5] && row[5].trim() !== ''
+            ? `<a href="${row[5]}" target="_blank">${row[5]}</a>`
+            : '事務局発行対応待ち';
+
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td>${row[1]}</td>  <!-- 予約者 -->
