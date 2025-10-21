@@ -6,7 +6,7 @@
   <style>
     body { font-family: sans-serif; padding: 2rem; background: #f9f9f9; }
     h1 { margin-bottom: 0.5rem; }
-    p { margin-bottom: 2rem; }
+    p { margin-bottom: 1rem; }
     table { border-collapse: collapse; width: 100%; background: #fff; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
     th { background-color: #eee; }
@@ -21,6 +21,9 @@
     <a href="https://docs.google.com/forms/d/e/1FAIpQLSeo-dHHhUbRbek30AeOoiZKu8TpEzoG89om46XhAxYKP65NzA/viewform" target="_blank">
       ▶ 会議予約フォームはこちら
     </a>
+  </p>
+  <p style="color: #555;">
+    ※ 終了から24時間以上経過した会議は一覧に表示されません。
   </p>
 
   <table id="reservation-table">
@@ -47,20 +50,28 @@
         const rows = parsed.data.slice(1); // ヘッダー行を除く
 
         const tbody = document.querySelector('#reservation-table tbody');
-        rows.forEach(row => {
-          const url = row[5] && row[5].trim() !== ''
-            ? `<a href="${row[5]}" target="_blank">${row[5]}</a>`
-            : '事務局発行対応待ち';
+        const now = new Date();
+        const cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24時間前
 
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${row[1]}</td>  <!-- 予約者 -->
-            <td>${row[2]}</td>  <!-- 開始 -->
-            <td>${row[3]}</td>  <!-- 終了 -->
-            <td>${row[4]}</td>  <!-- 会議名 -->
-            <td>${url}</td>     <!-- 会議URL -->
-          `;
-          tbody.appendChild(tr);
+        rows.forEach(row => {
+          const endTimeStr = row[3]; // 終了日時
+          const endTime = new Date(endTimeStr.replace(/-/g, '/')); // Safari対応
+
+          if (isNaN(endTime.getTime()) || endTime > cutoff) {
+            const url = row[5] && row[5].trim() !== ''
+              ? `<a href="${row[5]}" target="_blank">${row[5]}</a>`
+              : '事務局発行対応待ち';
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${row[1]}</td>  <!-- 予約者 -->
+              <td>${row[2]}</td>  <!-- 開始 -->
+              <td>${row[3]}</td>  <!-- 終了 -->
+              <td>${row[4]}</td>  <!-- 会議名 -->
+              <td>${url}</td>     <!-- 会議URL -->
+            `;
+            tbody.appendChild(tr);
+          }
         });
       });
   </script>
